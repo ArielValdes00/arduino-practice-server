@@ -3,12 +3,12 @@ const { SerialPort } = require('serialport');
 const cors = require('cors');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000; 
 
 app.use(cors());
 
 const serialPort = new SerialPort({
-  path: 'COM5',
+  path: process.env.SERIAL_PORT || 'COM5',
   baudRate: 9600,
 });
 
@@ -20,6 +20,7 @@ serialPort.on('error', (err) => {
   console.error('Error en el puerto serial:', err.message);
 });
 
+// Ruta para encender el LED
 app.get('/led/on', (req, res) => {
   serialPort.write('ON\n', (err) => {
     if (err) {
@@ -38,6 +39,6 @@ app.get('/led/off', (req, res) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`Servidor escuchando en http://localhost:${port}`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Servidor escuchando en http://0.0.0.0:${port}`);
 });
